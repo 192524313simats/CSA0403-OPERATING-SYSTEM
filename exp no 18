@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <Windows.h>
+
+#define BUFFER_SIZE 5
+#define MAX_ITEMS 10   // Maximum number of items to be produced/consumed
+
+int buffer[BUFFER_SIZE];
+sem_t empty, full;
+
+int produced_items = 0;
+int consumed_items = 0;
+
+void* producer(void* arg)
+{
+    while (produced_items < MAX_ITEMS)
+    {
+        sem_wait(&empty);
+
+        // Critical section: Add item to buffer
+        for (int i = 0; i < BUFFER_SIZE; i++)
+        {
+            if (buffer[i] == 0)
+            {
+                buffer[i] = produced_items + 1;
+                printf("Produced: %d\n", buffer[i]);
+
+                produced_items++;
+                break;
+            }
+        }
+
+        sem_post(&full);
+        Sleep(1);
+    }
+
+    return NULL;
+}
+
+void* consumer(void* arg)
+{
+    while (consumed_items < MAX_ITEMS)
+    {
+        sem_wait(&full);
+
+        // Critical section: Remove item from buffer
+        for (int i = 0; i < BUFFER_SIZE; i++)
+        {
+            if (buffer[i] != 0)
+            {
+                printf("Consumed: %d\n", buffer[i]);
+                buffer[i] = 0;
+
+                consumed_items++;
+                break;
+            }
+        }
+
+        sem_post(&empty);
+        Sleep(2);
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t producer_thread;
+    pthread_t consumer_thread;
+
+    sem_init(&empty, 0, BUFFER_SIZE);
+    sem_init(&full, 0, 0);
+
+    // Create producer and consumer threads
+    pthread_create(&producer_thread, NULL, producer, NULL);
+    pthread_create(&consumer_thread, NULL, consumer, NULL);
+
+    // Wait for threads to finish
+    pthread_join(producer_thread, NULL);
+    pthread_join(consumer_thread, NULL);
+
+    // Destroy semaphores
+    sem_destroy(&empty);
+    sem_destroy(&full);
+
+    return 0;
+}
+Input
+
+This program does not require any user input. It automatically produces and consumes 10 items.
+
+No input required
+Sample Output
+
+The exact order may vary because producer and consumer threads run concurrently.
+
+Produced: 1
+Consumed: 1
+Produced: 2
+Produced: 3
+Consumed: 2
+Produced: 4
+Produced: 5
+Consumed: 3
+Produced: 6
+Consumed: 4
+Produced: 7
+Produced: 8
+Consumed: 5
+Produced: 9
+Consumed: 6
+Produced: 10
+Consumed: 7
+Consumed: 8
+Consumed: 9
+Consumed: 10
