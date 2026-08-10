@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+sem_t mutex, writeBlock;
+
+int data = 0;
+int readersCount = 0;
+
+void *reader(void *arg)
+{
+    int i;
+
+    for (i = 0; i < 10; i++)
+    {
+        sem_wait(&mutex);
+
+        readersCount++;
+
+        if (readersCount == 1)
+            sem_wait(&writeBlock);
+
+        sem_post(&mutex);
+
+        printf("Reader reads data: %d\n", data);
+
+        sem_wait(&mutex);
+
+        readersCount--;
+
+        if (readersCount == 0)
+            sem_post(&writeBlock);
+
+        sem_post(&mutex);
+    }
+
+    return NULL;
+}
+
+void *writer(void *arg)
+{
+    int i;
+
+    for (i = 0; i < 10; i++)
+    {
+        sem_wait(&writeBlock);
+
+        data++;
+        printf("Writer writes data: %d\n", data);
+
+        sem_post(&writeBlock);
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t readerThread, writerThread;
+
+    sem_init(&mutex, 0, 1);
+    sem_init(&writeBlock, 0, 1);
+
+    pthread_create(&readerThread, NULL, reader, NULL);
+    pthread_create(&writerThread, NULL, writer, NULL);
+
+    pthread_join(readerThread, NULL);
+    pthread_join(writerThread, NULL);
+
+    sem_destroy(&mutex);
+    sem_destroy(&writeBlock);
+
+    return 0;
+}
+
+output:
+Writer writes data: 1
+Writer writes data: 2
+Writer writes data: 3
+Writer writes data: 4
+Writer writes data: 5
+Writer writes data: 6
+Writer writes data: 7
+Writer writes data: 8
+Writer writes data: 9
+Writer writes data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+Reader reads data: 10
+
+
+=== Code Execution Successful ===
