@@ -1,0 +1,144 @@
+#include <stdio.h>
+
+#define MAX_MEMORY 1000
+
+int memory[MAX_MEMORY];
+
+/* Initialize memory */
+void initializeMemory()
+{
+    for (int i = 0; i < MAX_MEMORY; i++)
+        memory[i] = -1;
+}
+
+/* Display free memory blocks */
+void displayMemory()
+{
+    int i, start, count = 0;
+
+    printf("\nMemory Status:\n");
+
+    for (i = 0; i < MAX_MEMORY; i++)
+    {
+        if (memory[i] == -1)
+        {
+            start = i;
+
+            while (i < MAX_MEMORY && memory[i] == -1)
+                i++;
+
+            printf("Free memory block %d-%d\n", start, i - 1);
+            count++;
+        }
+    }
+
+    if (count == 0)
+        printf("No free memory available.\n");
+}
+
+/* Worst Fit allocation */
+void allocateMemory(int processId, int size)
+{
+    int largestStart = -1;
+    int largestSize = 0;
+    int start, blockSize;
+    int i;
+
+    for (i = 0; i < MAX_MEMORY; i++)
+    {
+        if (memory[i] == -1)
+        {
+            start = i;
+            blockSize = 0;
+
+            while (i < MAX_MEMORY && memory[i] == -1)
+            {
+                blockSize++;
+                i++;
+            }
+
+            /* Select the largest free block */
+            if (blockSize > largestSize)
+            {
+                largestSize = blockSize;
+                largestStart = start;
+            }
+        }
+    }
+
+    if (largestSize >= size)
+    {
+        for (i = largestStart; i < largestStart + size; i++)
+            memory[i] = processId;
+
+        printf("\nAllocated %d KB to Process %d at %d-%d\n",
+               size, processId, largestStart,
+               largestStart + size - 1);
+    }
+    else
+    {
+        printf("\nMemory allocation for Process %d failed.\n", processId);
+    }
+}
+
+/* Deallocate memory */
+void deallocateMemory(int processId)
+{
+    for (int i = 0; i < MAX_MEMORY; i++)
+    {
+        if (memory[i] == processId)
+            memory[i] = -1;
+    }
+
+    printf("\nMemory released by Process %d\n", processId);
+}
+
+int main()
+{
+    initializeMemory();
+
+    displayMemory();
+
+    allocateMemory(1, 200);
+    displayMemory();
+
+    allocateMemory(2, 300);
+    displayMemory();
+
+    deallocateMemory(1);
+    displayMemory();
+
+    allocateMemory(3, 400);
+    displayMemory();
+
+    return 0;
+    }
+output:
+Memory Status:
+Free memory block 0-999
+
+Allocated 200 KB to Process 1 at 0-199
+
+Memory Status:
+Free memory block 200-999
+
+Allocated 300 KB to Process 2 at 200-499
+
+Memory Status:
+Free memory block 500-999
+
+Memory released by Process 1
+
+Memory Status:
+Free memory block 0-199
+Free memory block 500-999
+
+Allocated 400 KB to Process 3 at 500-899
+
+Memory Status:
+Free memory block 0-199
+Free memory block 900-999
+
+
+=== Code Execution Successful ===
+    
