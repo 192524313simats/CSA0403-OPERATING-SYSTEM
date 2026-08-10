@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main()
+{
+    int fd;
+    char buffer[100];
+
+    /* Create the file */
+    fd = creat("sample.txt", 0644);
+
+    if (fd == -1)
+    {
+        perror("File creation failed");
+        return 1;
+    }
+
+    printf("File created successfully.\n");
+    close(fd);
+
+    /* Open file for writing */
+    fd = open("sample.txt", O_WRONLY | O_APPEND);
+
+    if (fd == -1)
+    {
+        perror("File opening failed");
+        return 1;
+    }
+
+    write(fd, "Hello, World!\n", 14);
+    printf("Data written successfully.\n");
+
+    close(fd);
+
+    /* Open file for reading */
+    fd = open("sample.txt", O_RDONLY);
+
+    if (fd == -1)
+    {
+        perror("File opening failed");
+        return 1;
+    }
+
+    int bytesRead = read(fd, buffer, sizeof(buffer) - 1);
+
+    if (bytesRead == -1)
+    {
+        perror("File reading failed");
+        close(fd);
+        return 1;
+    }
+
+    buffer[bytesRead] = '\0';
+
+    printf("Data read from file:\n%s", buffer);
+
+    close(fd);
+
+    /* Delete the file */
+    if (remove("sample.txt") == 0)
+        printf("File deleted successfully.\n");
+    else
+        printf("File deletion failed.\n");
+
+    return 0;
+}
+Output
+File created successfully.
+Data written successfully.
+Data read from file:
+Hello, World!
+File deleted successfully.
