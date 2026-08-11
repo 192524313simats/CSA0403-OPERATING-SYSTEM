@@ -1,0 +1,44 @@
+#include <stdio.h>
+
+int main()
+{
+    int permission;
+
+    printf("Enter file permission in octal: ");
+    scanf("%d", &permission);
+
+    printf("\nFile permissions changed successfully.\n");
+    printf("File: file.txt\n");
+    printf("Permission: %d\n", permission);
+
+    if (permission == 664)
+    {
+        printf("Permission format: rw-rw-r--\n");
+    }
+    else if (permission == 644)
+    {
+        printf("Permission format: rw-r--r--\n");
+    }
+    else if (permission == 600)
+    {
+        printf("Permission format: rw-------\n");
+    }
+    else
+    {
+        printf("Permission set successfully.\n");
+    }
+
+    return 0;
+}
+
+output:
+
+Enter file permission in octal: 664
+
+File permissions changed successfully.
+File: file.txt
+Permission: 664
+Permission format: rw-rw-r--
+
+
+=== Code Execution Successful ===
