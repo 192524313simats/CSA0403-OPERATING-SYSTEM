@@ -1,0 +1,154 @@
+#include <stdio.h>
+
+#define MAX 100
+#define DISK_SIZE 200
+
+int main()
+{
+    int n;
+    int request[MAX];
+    int head;
+    int direction;
+    int seek_time = 0;
+    int i, j, temp;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX)
+    {
+        printf("Invalid number of requests.\n");
+        return 0;
+    }
+
+    printf("Enter the disk request queue:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &request[i]);
+    }
+
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &head);
+
+    printf("Enter direction (1 for right, 0 for left): ");
+    scanf("%d", &direction);
+
+    /* Sort the request queue */
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (request[i] > request[j])
+            {
+                temp = request[i];
+                request[i] = request[j];
+                request[j] = temp;
+            }
+        }
+    }
+
+    printf("\nSCAN Disk Scheduling:\n");
+    printf("Head Movement Sequence: %d", head);
+
+    if (direction == 1)
+    {
+        /* Move towards right */
+        for (i = 0; i < n; i++)
+        {
+            if (request[i] >= head)
+            {
+                break;
+            }
+        }
+
+        /* Service requests to the right */
+        for (j = i; j < n; j++)
+        {
+            seek_time += request[j] - head;
+            head = request[j];
+
+            printf(" -> %d", head);
+        }
+
+        /* Move to the right end of disk */
+        if (head != DISK_SIZE - 1)
+        {
+            seek_time += (DISK_SIZE - 1) - head;
+            head = DISK_SIZE - 1;
+
+            printf(" -> %d", head);
+        }
+
+        /* Reverse direction and service remaining requests */
+        for (j = i - 1; j >= 0; j--)
+        {
+            seek_time += head - request[j];
+            head = request[j];
+
+            printf(" -> %d", head);
+        }
+    }
+    else
+    {
+        /* Move towards left */
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (request[i] <= head)
+            {
+                break;
+            }
+        }
+
+        /* Service requests to the left */
+        for (j = i; j >= 0; j--)
+        {
+            seek_time += head - request[j];
+            head = request[j];
+
+            printf(" -> %d", head);
+        }
+
+        /* Move to the left end of disk */
+        if (head != 0)
+        {
+            seek_time += head;
+            head = 0;
+
+            printf(" -> %d", head);
+        }
+
+        /* Reverse direction and service remaining requests */
+        for (j = i + 1; j < n; j++)
+        {
+            seek_time += request[j] - head;
+            head = request[j];
+
+            printf(" -> %d", head);
+        }
+    }
+
+    printf("\n\nTotal Seek Time: %d\n", seek_time);
+
+    printf("Average Seek Time: %.2f\n",
+           (double)seek_time / n);
+
+    return 0;
+}
+
+output:
+
+Enter the number of disk requests: 8
+Enter the disk request queue:
+98 183 37 122 14 124 65 67
+Enter the initial position of the disk head: 53
+Enter direction (1 for right, 0 for left): 1
+
+SCAN Disk Scheduling:
+Head Movement Sequence: 53 -> 65 -> 67 -> 98 -> 122 -> 124 -> 183 -> 199 -> 37 -> 14
+
+Total Seek Time: 331
+Average Seek Time: 41.38
+
+
+=== Code Execution Successful ===
