@@ -1,0 +1,125 @@
+#include <stdio.h>
+
+struct Record
+{
+    int recordNumber;
+    char data[256];
+};
+
+int main()
+{
+    FILE *file;
+    struct Record record;
+    int searchNumber;
+    int found;
+
+    /* Create file and write records */
+    file = fopen("sequential_file.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return 1;
+    }
+
+    printf("Enter records (enter 0 to stop):\n");
+
+    while (1)
+    {
+        printf("\nRecord Number: ");
+        scanf("%d", &record.recordNumber);
+
+        if (record.recordNumber == 0)
+        {
+            break;
+        }
+
+        printf("Data: ");
+        scanf(" %255[^\n]", record.data);
+
+        fprintf(file, "%d|%s\n",
+                record.recordNumber,
+                record.data);
+    }
+
+    fclose(file);
+
+    /* Open file for reading */
+    file = fopen("sequential_file.txt", "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for reading.\n");
+        return 1;
+    }
+
+    /* Search records */
+    while (1)
+    {
+        printf("\nEnter record number to search (0 to exit): ");
+        scanf("%d", &searchNumber);
+
+        if (searchNumber == 0)
+        {
+            break;
+        }
+
+        rewind(file);
+        found = 0;
+
+        while (fscanf(file, "%d|%255[^\n]\n",
+                      &record.recordNumber,
+                      record.data) == 2)
+        {
+            if (record.recordNumber == searchNumber)
+            {
+                printf("\nRecord Found!\n");
+                printf("Record Number: %d\n", record.recordNumber);
+                printf("Data: %s\n", record.data);
+
+                found = 1;
+                break;
+            }
+        }
+
+        if (found == 0)
+        {
+            printf("\nRecord not found.\n");
+        }
+    }
+
+    fclose(file);
+
+    return 0;
+}
+Sample Input
+Enter records (enter 0 to stop):
+
+Record Number: 1
+Data: Alice
+
+Record Number: 2
+Data: Bob
+
+Record Number: 3
+Data: Charlie
+
+Record Number: 0
+
+Enter record number to search (0 to exit): 2
+Output
+Record Found!
+Record Number: 2
+Data: Bob
+
+Enter record number to search (0 to exit): 3
+
+Record Found!
+Record Number: 3
+Data: Charlie
+
+Enter record number to search (0 to exit): 5
+
+Record not found.
+
+Enter record number to search (0 to exit): 0
