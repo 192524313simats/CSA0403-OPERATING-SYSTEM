@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+#define MAX 10
+
+int main()
+{
+    int blockNumber[MAX];
+    int index[MAX];
+    char data[MAX][50];
+
+    int n, i, search, position;
+
+    /* Initialize index */
+    for (i = 0; i < MAX; i++)
+    {
+        index[i] = -1;
+    }
+
+    printf("Enter number of blocks: ");
+    scanf("%d", &n);
+
+    /* Enter blocks */
+    for (i = 0; i < n; i++)
+    {
+        printf("\nEnter block number: ");
+        scanf("%d", &blockNumber[i]);
+
+        printf("Enter data: ");
+        scanf(" %49[^\n]", data[i]);
+
+        index[blockNumber[i]] = i;
+    }
+
+    /* Display index */
+    printf("\n--- Index Table ---\n");
+
+    for (i = 0; i < n; i++)
+    {
+        printf("Block %d -> Position %d\n",
+               blockNumber[i], index[blockNumber[i]]);
+    }
+
+    /* Search block */
+    printf("\nEnter block number to search: ");
+    scanf("%d", &search);
+
+    if (search >= 0 && search < MAX && index[search] != -1)
+    {
+        position = index[search];
+
+        printf("\nBlock Found!\n");
+        printf("Block Number: %d\n", blockNumber[position]);
+        printf("Data: %s\n", data[position]);
+    }
+    else
+    {
+        printf("\nBlock not found.\n");
+    }
+
+    return 0;
+}
+
+output:
+Enter number of blocks: 3
+
+Enter block number: 1
+Enter data: block
+
+Enter block number: 2
+Enter data: block
+
+Enter block number: 3
+Enter data: block
+
+--- Index Table ---
+Block 1 -> Position 0
+Block 2 -> Position 1
+Block 3 -> Position 2
+
+Enter block number to search: 2
+
+Block Found!
+Block Number: 2
+Data: block
+
+
+=== Code Execution Successful ===
