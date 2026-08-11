@@ -1,0 +1,110 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 3
+
+void printFrames(int frames[], int n)
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+    {
+        if (frames[i] == -1)
+            printf(" - ");
+        else
+            printf(" %d ", frames[i]);
+    }
+
+    printf("\n");
+}
+
+int main()
+{
+    int referenceString[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2};
+
+    int n = sizeof(referenceString) / sizeof(referenceString[0]);
+
+    int frames[MAX_FRAMES];
+    int framePointer = 0;
+    int pageFaults = 0;
+
+    int i, j;
+    
+    // Initialize frames
+    for (i = 0; i < MAX_FRAMES; i++)
+    {
+        frames[i] = -1;
+    }
+
+    printf("Reference String: ");
+
+    for (i = 0; i < n; i++)
+    {
+        printf("%d ", referenceString[i]);
+    }
+
+    printf("\n\n");
+
+    printf("Page Replacement Order:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        int page = referenceString[i];
+        int pageFound = 0;
+
+        // Check whether page is already in memory
+        for (j = 0; j < MAX_FRAMES; j++)
+        {
+            if (frames[j] == page)
+            {
+                pageFound = 1;
+                break;
+            }
+        }
+
+        // Page fault occurs
+        if (!pageFound)
+        {
+            printf("Page %d -> ", page);
+
+            frames[framePointer] = page;
+
+            framePointer = (framePointer + 1) % MAX_FRAMES;
+
+            pageFaults++;
+
+            printFrames(frames, MAX_FRAMES);
+        }
+        else
+        {
+            printf("Page %d -> No Page Fault\n", page);
+        }
+    }
+
+    printf("\nTotal Page Faults = %d\n", pageFaults);
+
+    return 0;
+}
+
+output:
+
+Reference String: 7 0 1 2 0 3 0 4 2 3 0 3 2 
+
+Page Replacement Order:
+Page 7 ->  7  -  - 
+Page 0 ->  7  0  - 
+Page 1 ->  7  0  1 
+Page 2 ->  2  0  1 
+Page 0 -> No Page Fault
+Page 3 ->  2  3  1 
+Page 0 ->  2  3  0 
+Page 4 ->  4  3  0 
+Page 2 ->  4  2  0 
+Page 3 ->  4  2  3 
+Page 0 ->  0  2  3 
+Page 3 -> No Page Fault
+Page 2 -> No Page Fault
+
+Total Page Faults = 10
+
+
+=== Code Execution Successful ===
