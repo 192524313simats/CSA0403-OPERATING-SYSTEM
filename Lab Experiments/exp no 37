@@ -1,0 +1,72 @@
+#include <stdio.h>
+
+#define MAX 100
+
+int main()
+{
+    int n;
+    int head;
+    int request_queue[MAX];
+    int seek_time = 0;
+    int i;
+    int distance;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX)
+    {
+        printf("Invalid number of requests.\n");
+        return 0;
+    }
+
+    printf("Enter the disk request queue:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &request_queue[i]);
+    }
+
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &head);
+
+    printf("\nFCFS Disk Scheduling:\n");
+    printf("Head Movement Sequence: %d", head);
+
+    for (i = 0; i < n; i++)
+    {
+        distance = head - request_queue[i];
+
+        if (distance < 0)
+        {
+            distance = -distance;
+        }
+
+        seek_time = seek_time + distance;
+
+        head = request_queue[i];
+
+        printf(" -> %d", head);
+    }
+
+    printf("\nTotal Seek Time: %d", seek_time);
+    printf("\nAverage Seek Time: %.2f\n",
+           (double)seek_time / n);
+
+    return 0;
+}
+
+output:
+
+Enter the number of disk requests: 8
+Enter the disk request queue:
+98 183 37 122 14 124 65 67
+Enter the initial position of the disk head: 53
+
+FCFS Disk Scheduling:
+Head Movement Sequence: 53 -> 98 -> 183 -> 37 -> 122 -> 14 -> 124 -> 65 -> 67
+Total Seek Time: 640
+Average Seek Time: 80.00
+
+
+=== Code Execution Successful ===
