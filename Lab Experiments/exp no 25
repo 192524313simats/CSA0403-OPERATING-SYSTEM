@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+
+extern int errno;
+
+int main()
+{
+    int fd;
+    char filename[100];
+
+    printf("Enter file name: ");
+    scanf("%s", filename);
+
+    fd = open(filename, O_RDONLY | O_CREAT, 0644);
+
+    printf("fd = %d\n", fd);
+
+    if (fd == -1)
+    {
+        printf("Error Number = %d\n", errno);
+        perror("Program");
+    }
+    else
+    {
+        printf("File opened/created successfully.\n");
+        close(fd);
+    }
+
+    return 0;
+}
+
+output:
+Enter file name: foo.txt
+fd = -1
+Error Number = 13
+Program: Permission denied
+
+
+=== Code Execution Successful ===
