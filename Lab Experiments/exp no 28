@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 1024
+
+void searchFile(const char *pattern, const char *filename)
+{
+    FILE *file;
+    char line[MAX_LINE_LENGTH];
+
+    file = fopen(filename, "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    printf("\nLines containing the pattern \"%s\":\n", pattern);
+
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        if (strstr(line, pattern) != NULL)
+        {
+            printf("%s", line);
+        }
+    }
+
+    fclose(file);
+}
+
+int main()
+{
+    char pattern[100];
+    char filename[100];
+
+    printf("Enter the file name: ");
+    scanf("%s", filename);
+
+    printf("Enter the pattern to search: ");
+    scanf("%s", pattern);
+
+    searchFile(pattern, filename);
+
+    return 0;
+}
+
+output:
+Enter the file name: example.txt
+Enter the pattern to search: programming
+Error opening file.
+
+
+=== Code Execution Successful ===
